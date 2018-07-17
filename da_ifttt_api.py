@@ -4,6 +4,8 @@ from flask_cors import CORS
 import datetime
 import logging
 
+app_ifttt_channel_key = 'dV8XXrIUIoBe9jK04jlXA0hkzf1El4wBjbaW9VezxnCxZAINw7bnoFxfej-9fWBk'
+
 app = Flask(__name__, static_url_path='/static')
 handler = logging.FileHandler('da_ifttt_api.log')
 handler.setLevel(logging.DEBUG)
@@ -49,8 +51,33 @@ class TestAction(Resource):
         return {'data': reasponse_data}
 
 
+class StatusEndPoint(Resource):
+    def get(self):
+        for key, value in request.headers:
+            logging.debug('Headers-------------------')
+            logging.debug('{}: {}'.format(key, value))
+
+        errors_array = list()
+
+        if not request.headers['IFTTT-Channel-Key']:
+            error = {'message': 'no IFTTT-Channel-Key header'}
+            errors_array.append(error)
+            return {'errors': errors_array}, 404
+
+        channel_key = request.headers['IFTTT-Channel-Key']
+        if channel_key != app_ifttt_channel_key:
+            error = {'message': 'INVALID IFTTT-Channel-Key'}
+            errors_array.append(error)
+            return {'errors': errors_array}, 404
+
+        logging.debug('IFTTT-Channel-Key: {}'.format(channel_key))
+
+        return {'data': {'test_past': True}}
+
+
 api.add_resource(HelloWorld, '/api/helloworld')
 api.add_resource(TestAction, '/api/ifttt/v1/actions/testaction')
+api.add_resource(StatusEndPoint, '/api/ifttt/v1/status')
 
 if __name__ == '__main__':
     app.run(debug=True)
