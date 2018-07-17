@@ -75,10 +75,34 @@ class StatusEndPoint(Resource):
         return {'data': {'test_pass': True}}
 
 
+class TestSetupEndPoint(Resource):
+    def get(self):
+        for key, value in request.headers:
+            logging.debug('Headers-------------------')
+            logging.debug('{}: {}'.format(key, value))
+
+        errors_array = list()
+
+        if not request.headers['IFTTT-Channel-Key']:
+            error = {'message': 'no IFTTT-Channel-Key header'}
+            errors_array.append(error)
+            return {'errors': errors_array}, 401
+
+        channel_key = request.headers['IFTTT-Channel-Key']
+        if channel_key != app_ifttt_channel_key:
+            error = {'message': 'INVALID IFTTT-Channel-Key'}
+            errors_array.append(error)
+            return {'errors': errors_array}, 401
+
+        logging.debug('IFTTT-Channel-Key: {}'.format(channel_key))
+
+        return {'data': {'test_pass': True}}
+
+
 api.add_resource(HelloWorld, '/api/helloworld')
 api.add_resource(TestAction, '/api/ifttt/v1/actions/testaction')
 api.add_resource(StatusEndPoint, '/api/ifttt/v1/status')
-api.add_resource(StatusEndPoint, '/api/ifttt/v1/test/setup')
+api.add_resource(TestSetupEndPoint, '/api/ifttt/v1/test/setup')
 
 if __name__ == '__main__':
     app.run(debug=True)
