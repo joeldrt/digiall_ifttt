@@ -1,4 +1,4 @@
-from da_iftt_api import app
+from da_ifttt_api import app
 
 
 if __name__ == '__main__':

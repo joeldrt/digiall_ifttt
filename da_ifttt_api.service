@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve digiall_ifttt
+After=network.target
+
+[Service]
+User=joeldrt
+Group=www-data
+WorkingDirectory=!!!!CHANGE-ME: SET MY PROJECT PATH!!!!
+Environment="PATH=!!!!CHANGE-ME: ENVIRONMENT BIN FOLDER!!!!"
+ExecStart=!!!!CHANGE-ME: ENVIRONMENT UWSGI PATH!!!! --ini da_ifttt_api.ini
+
+[Install]
+WantedBy=multi-user.target
