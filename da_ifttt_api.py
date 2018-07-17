@@ -76,7 +76,7 @@ class StatusEndPoint(Resource):
 
 
 class TestSetupEndPoint(Resource):
-    def get(self):
+    def post(self):
         for key, value in request.headers:
             logging.debug('Headers-------------------')
             logging.debug('{}: {}'.format(key, value))
