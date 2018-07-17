@@ -62,13 +62,13 @@ class StatusEndPoint(Resource):
         if not request.headers['IFTTT-Channel-Key']:
             error = {'message': 'no IFTTT-Channel-Key header'}
             errors_array.append(error)
-            return {'errors': errors_array}, 404
+            return {'errors': errors_array}, 401
 
         channel_key = request.headers['IFTTT-Channel-Key']
         if channel_key != app_ifttt_channel_key:
             error = {'message': 'INVALID IFTTT-Channel-Key'}
             errors_array.append(error)
-            return {'errors': errors_array}, 404
+            return {'errors': errors_array}, 401
 
         logging.debug('IFTTT-Channel-Key: {}'.format(channel_key))
 
