@@ -72,12 +72,13 @@ class StatusEndPoint(Resource):
 
         logging.debug('IFTTT-Channel-Key: {}'.format(channel_key))
 
-        return {'data': {'test_past': True}}
+        return {'data': {'test_pass': True}}
 
 
 api.add_resource(HelloWorld, '/api/helloworld')
 api.add_resource(TestAction, '/api/ifttt/v1/actions/testaction')
 api.add_resource(StatusEndPoint, '/api/ifttt/v1/status')
+api.add_resource(StatusEndPoint, '/api/ifttt/v1/test/setup')
 
 if __name__ == '__main__':
     app.run(debug=True)
