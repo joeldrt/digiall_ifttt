@@ -1,8 +1,8 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_restful import Resource, Api, reqparse
-from flask_cors import CORS
 import datetime
 import logging
+import json
 
 app_ifttt_channel_key = 'dV8XXrIUIoBe9jK04jlXA0hkzf1El4wBjbaW9VezxnCxZAINw7bnoFxfej-9fWBk'
 
@@ -11,19 +11,17 @@ handler = logging.FileHandler('da_ifttt_api.log')
 handler.setLevel(logging.DEBUG)
 app.logger.addHandler(handler)
 
-CORS(app)
 api = Api(app)
+
+parser = reqparse.RequestParser()
+parser.add_argument('actionFields', type=dict, required=True)
+parser.add_argument('ifttt_source', type=dict)
+parser.add_argument('user', type=dict)
 
 
 class HelloWorld(Resource):
     def get(self):
         return {'hello': 'world'}
-
-
-parser = reqparse.RequestParser()
-parser.add_argument('actionFields', type=dict, required=True)
-parser.add_argument('ifttt_source', type=dict, required=True)
-parser.add_argument('user', type=dict)
 
 
 class TestAction(Resource):
@@ -32,23 +30,45 @@ class TestAction(Resource):
             logging.debug('Headers-------------------')
             logging.debug('{}: {}'.format(key, value))
 
+        def myconverter(o):
+            if isinstance(o, datetime.datetime):
+                return o.__str__()
+
+        errors_array = list()
+
+        channel_key = request.headers['IFTTT-Channel-Key']
+        if channel_key != app_ifttt_channel_key:
+            error = {'message': 'INVALID IFTTT-Channel-Key'}
+            errors_array.append(error)
+            error_object = {'errors': errors_array}
+
+            resp = Response(json.dumps(error_object, ensure_ascii=False, default=myconverter),
+                            mimetype='application/json; charset=utf-8', status=401)
+
+            return resp
+
         data = parser.parse_args()
 
-        for key, value in data['actionFields']:
+        for key in dict(data['actionFields']).keys():
             logging.debug('Action fields ------------')
-            logging.debug('{}: {}'.format(key, value))
+            logging.debug('{}: {}'.format(key, dict(data['actionFields']).get(key)))
 
-        for key, value in data['ifttt_source']:
-            logging.debug('Ifttt source -------------')
-            logging.debug('{}: {}'.format(key, value))
+        if data['ifttt_source']:
+            for key in dict(data['ifttt_source']).keys():
+                logging.debug('Ifttt source -------------')
+                logging.debug('{}: {}'.format(key, dict(data['actionFields']).get(key)))
 
-        response = {'id': datetime.datetime.now,
+        response = {'id': datetime.datetime.now(),
                     'url': 'http://www.digiall.mx'}
 
-        reasponse_data = list()
-        reasponse_data.append(response)
+        response_data = list()
+        response_data.append(response)
 
-        return {'data': reasponse_data}
+        last_object = {'data': response_data}
+
+        resp = Response(json.dumps(last_object, ensure_ascii=False, default=myconverter), mimetype='application/json; charset=utf-8')
+
+        return resp
 
 
 class StatusEndPoint(Resource):
@@ -96,7 +116,11 @@ class TestSetupEndPoint(Resource):
 
         logging.debug('IFTTT-Channel-Key: {}'.format(channel_key))
 
-        return {'data': {'test_pass': True}}
+        response_data = {'data': {'test_pass': 'lastname is Davila'}}
+
+        resp = Response(json.dumps(response_data, ensure_ascii=False), mimetype='application/json; charset=utf-8')
+
+        return resp
 
 
 api.add_resource(HelloWorld, '/api/helloworld')
