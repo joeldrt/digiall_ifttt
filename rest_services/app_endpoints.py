@@ -9,24 +9,41 @@ from mongoengine.queryset.visitor import Q
 from openpyxl import Workbook
 
 
-def get_registros(fecha_inicial: str, fecha_final: str) -> []:
+def get_registros(fecha_inicial: str, fecha_final: str, sensor_id: str) -> []:
     fecha_inicial_date = datetime.strptime(fecha_inicial, '%Y-%m-%d')
     fecha_final_date = datetime.strptime(fecha_final, '%Y-%m-%d') + timedelta(days=1)
 
-    registros = [
-        registro.to_dict() for registro in RegistroSensor.objects(
+    if sensor_id == 'TODOS':
+        objetos = RegistroSensor.objects(
             Q(fecha_creacion__gte=fecha_inicial_date) &
-            Q(fecha_creacion__lte=fecha_final_date))
+            Q(fecha_creacion__lte=fecha_final_date)
+        )
+    else:
+        objetos = RegistroSensor.objects(
+            Q(sensor_id=sensor_id) &
+            Q(fecha_creacion__gte=fecha_inicial_date) &
+            Q(fecha_creacion__lte=fecha_final_date)
+        )
+
+    registros = [
+        registro.to_dict() for registro in objetos
     ]
     return registros
+
+
+class ObtenerSensoresIds(Resource):
+    def get(self):
+        sensores_ids = RegistroSensor.objects().distinct('sensor_id')
+        return sensores_ids
 
 
 class MostrarRegistros(Resource):
     def get(self):
         fecha_inicial = str(request.args.get('fecha_inicial'))
         fecha_final = str(request.args.get('fecha_final'))
+        sensor_id = str(request.args.get('sensor_id'))
 
-        registros = get_registros(fecha_inicial, fecha_final)
+        registros = get_registros(fecha_inicial, fecha_final, sensor_id)
 
         return registros
 
@@ -35,8 +52,9 @@ class CreateExcelFile(Resource):
     def get(self):
         fecha_inicial = str(request.args.get('fecha_inicial'))
         fecha_final = str(request.args.get('fecha_final'))
+        sensor_id = str(request.args.get('sensor_id'))
 
-        registros = get_registros(fecha_inicial, fecha_final)
+        registros = get_registros(fecha_inicial, fecha_final, sensor_id)
 
         wb = Workbook()
         ws = wb.active
@@ -51,7 +69,7 @@ class CreateExcelFile(Resource):
             ws.cell(row=(row + 2), column=3, value=registro['tipo_evento'])
             ws.cell(row=(row + 2), column=4, value=registro['sensor_id'])
 
-        file_name = '{}_{}.xlsx'.format(fecha_inicial, fecha_final)
+        file_name = '{}_{}_{}.xlsx'.format(fecha_inicial, fecha_final, sensor_id)
 
         wb.save('./static/{}'.format(file_name))
 

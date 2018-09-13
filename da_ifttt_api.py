@@ -19,7 +19,7 @@ mongo_setup.global_init()
 
 
 from rest_services.ifttt_endpoints import HelloWorld, SensorActivado, SensorNormal, StatusEndPoint, TestSetupEndPoint
-from rest_services.app_endpoints import MostrarRegistros, CreateExcelFile
+from rest_services.app_endpoints import ObtenerSensoresIds, MostrarRegistros, CreateExcelFile
 
 api.add_resource(HelloWorld, '/api/helloworld')
 api.add_resource(SensorActivado, '/api/ifttt/v1/actions/sensoractivado')
@@ -27,5 +27,6 @@ api.add_resource(SensorNormal, '/api/ifttt/v1/actions/sensornormal')
 api.add_resource(StatusEndPoint, '/api/ifttt/v1/status')
 api.add_resource(TestSetupEndPoint, '/api/ifttt/v1/test/setup')
 
+api.add_resource(ObtenerSensoresIds, '/api/sensores_ids')
 api.add_resource(MostrarRegistros, '/api/registros')
 api.add_resource(CreateExcelFile, '/api/descargar_excel')
