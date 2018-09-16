@@ -4,21 +4,17 @@ from datetime import datetime
 import data.mongo_digiall_utils as mongo_utils
 
 
-class RegistroSensor(mongoengine.Document):
-    ABIERTO = 'ABIERTO'
-    CERRADO = 'CERRADO'
-
+class Sensor(mongoengine.Document):
     fecha_creacion = mongoengine.DateTimeField(default=datetime.now())
 
-    tipo_evento = mongoengine.StringField()
-
-    dispositivo_id = mongoengine.StringField()
-    reported_at = mongoengine.StringField()
+    dispositivo_id = mongoengine.StringField(unique=True)
+    nombre = mongoengine.StringField()
+    tipo_sensor = mongoengine.StringField()
 
     def to_dict(self):
         return mongo_utils.mongo_to_dict(self)
 
     meta = {
         'db_alias': 'ifttt',
-        'collection': 'registro_sensor'
+        'collection': 'sensor'
     }

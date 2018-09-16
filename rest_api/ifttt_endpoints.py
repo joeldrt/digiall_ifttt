@@ -1,10 +1,12 @@
 from flask import request, Response
 from flask_restful import Resource
-from data.registro_sensor import RegistroSensor
 from datetime import datetime
 import json
 
 import logging
+
+# data services
+from services import registro_sensor_service as registro_service
 
 from da_ifttt_api import app_ifttt_channel_key
 
@@ -57,10 +59,10 @@ class SensorActivado(Resource):
                             mimetype='application/json; charset=utf-8', status=400)
             return resp
 
-        sensor_id = data['actionFields']['sensor_id']
-        print("sensor_id: {}".format(sensor_id))
+        dispositivo_id = data['actionFields']['sensor_id']
+        print("dispositivo_id: {}".format(dispositivo_id))
 
-        if 'SENSOR-CUARTO-SKIP' == sensor_id:
+        if 'SENSOR-CUARTO-SKIP' == dispositivo_id:
             error = {'message': 'Sensor Id not registered'}
             errors_array.append(error)
             error2 = {'status': 'SKIP', 'message': 'ID_not accepted'}
@@ -82,13 +84,7 @@ class SensorActivado(Resource):
 
         print("reported_at: {}".format(reported_at))
 
-        registro_sensor = RegistroSensor()
-        registro_sensor.fecha_creacion = datetime.now()
-        registro_sensor.tipo_evento = ABIERTO
-        registro_sensor.sensor_id = sensor_id
-        registro_sensor.reported_at = reported_at
-
-        registro_sensor.save()
+        registro_sensor = registro_service.registrar_apertura(dispositivo_id, reported_at)
 
         response = {'id': str(registro_sensor.id),
                     'url': 'http://www.digiall.mx'}
@@ -144,10 +140,10 @@ class SensorNormal(Resource):
                             mimetype='application/json; charset=utf-8', status=400)
             return resp
 
-        sensor_id = data['actionFields']['sensor_id']
-        print("sensor_id: {}".format(sensor_id))
+        dispositivo_id = data['actionFields']['sensor_id']
+        print("sensor_id: {}".format(dispositivo_id))
 
-        if 'SENSOR-CUARTO-SKIP' == sensor_id:
+        if 'SENSOR-CUARTO-SKIP' == dispositivo_id:
             error = {'message': 'Sensor Id not registered'}
             errors_array.append(error)
             error2 = {'status': 'SKIP', 'message': 'ID_not accepted'}
@@ -169,13 +165,7 @@ class SensorNormal(Resource):
 
         print("reported_at: {}".format(reported_at))
 
-        registro_sensor = RegistroSensor()
-        registro_sensor.fecha_creacion = datetime.now()
-        registro_sensor.tipo_evento = CERRADO
-        registro_sensor.sensor_id = sensor_id
-        registro_sensor.reported_at = reported_at
-
-        registro_sensor.save()
+        registro_sensor = registro_service.registrar_cerrado(dispositivo_id, reported_at)
 
         response = {'id': str(registro_sensor.id),
                     'url': 'http://www.digiall.mx'}
