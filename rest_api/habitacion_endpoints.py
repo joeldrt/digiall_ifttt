@@ -1,11 +1,15 @@
 from flask import request
 from flask_restful import Resource
+from flask_jwt_extended import (jwt_required,
+                                get_jwt_identity)
 
 from services import  habitacion_service
 
 
 class GuardarHabitacion(Resource):
+    @jwt_required
     def post(self):
+        email = get_jwt_identity()
         data = request.get_json()
 
         complejo_id = data['complejo_id']

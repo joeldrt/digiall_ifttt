@@ -80,11 +80,15 @@ class SensorActivado(Resource):
                             mimetype='application/json; charset=utf-8', status=400)
             return resp
 
-        reported_at = data['actionFields']['reported_at']
+        extra_data = data['actionFields']['reported_at']
+
+        usuario_propietario, reported_at = extra_data.split(';')
 
         print("reported_at: {}".format(reported_at))
 
-        registro_sensor = registro_service.registrar_apertura(dispositivo_id, reported_at)
+        registro_sensor = registro_service.registrar_apertura(usuario_propietario=usuario_propietario,
+                                                              dispositivo_id=dispositivo_id,
+                                                              reported_at=reported_at)
 
         response = {'id': str(registro_sensor.id),
                     'url': 'http://www.digiall.mx'}
@@ -161,11 +165,15 @@ class SensorNormal(Resource):
                             mimetype='application/json; charset=utf-8', status=400)
             return resp
 
-        reported_at = data['actionFields']['reported_at']
+        extra_data = data['actionFields']['reported_at']
+
+        usuario_propietario, reported_at = extra_data.split(';')
 
         print("reported_at: {}".format(reported_at))
 
-        registro_sensor = registro_service.registrar_cerrado(dispositivo_id, reported_at)
+        registro_sensor = registro_service.registrar_cerrado(usuario_propietario=usuario_propietario,
+                                                             dispositivo_id=dispositivo_id,
+                                                             reported_at=reported_at)
 
         response = {'id': str(registro_sensor.id),
                     'url': 'http://www.digiall.mx'}

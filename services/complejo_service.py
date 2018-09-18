@@ -12,7 +12,8 @@ def agregar(usuario_propietario: str, nombre: str, direccion: str, telefonos: [s
     complejo.telefonos = telefonos
     complejo.latitud = latitud
     complejo.longitud = longitud
-    complejo.posicion_geografica = [longitud, latitud]
+    if longitud and latitud:
+        complejo.posicion_geografica = [longitud, latitud]
 
     complejo = complejo.save()
 
@@ -23,12 +24,30 @@ def obtener_complejos_por_propietario(usuario_propietario: str) -> [Complejo]:
     return Complejo.objects(usuario_propietario=usuario_propietario)
 
 
-def obtener_complejo_por_id(complejo_id: str) -> Complejo:
-    complejo = Complejo.objects().get(id=complejo_id)
+def obtener_complejo_por_id(usuario_propietario: str, complejo_id: str) -> Complejo:
+    complejo = Complejo.objects(usuario_propietario=usuario_propietario).get(id=complejo_id)
     return complejo
 
 
-def borrar_complejo_por_id(complejo_id: str) -> bool:
-    complejo = Complejo.objects().get(id=complejo_id)
+def borrar_complejo_por_id(usuario_propietario: str, complejo_id: str) -> bool:
+    complejo = Complejo.objects(usuario_propietario=usuario_propietario).get(id=complejo_id)
     complejo.delete()
     return True
+
+
+def complejo_le_pertenece_a_propietario(usuario_propietario: str,complejo_id: str) -> bool:
+    complejo = Complejo.objects().get(id=complejo_id)
+    return complejo.usuario_propietario == usuario_propietario
+
+
+def editar_complejo(complejo_id: str, nombre: str, direccion: str, telefonos: [str],
+                    latitud: float, longitud: float) -> Complejo:
+    complejo = Complejo.objects().get(id=complejo_id)
+    complejo.nombre = nombre
+    complejo.direccion = direccion
+    complejo.telefonos = telefonos
+    complejo.latitud = latitud
+    complejo.longitud = longitud
+    complejo.posicion_geografica = [longitud, latitud]
+    complejo = complejo.save()
+    return complejo

@@ -4,3 +4,5 @@ __pycache__/
 /static/
 
 da_ifttt_api.log
+
+app.db

@@ -11,9 +11,9 @@ class RegistroSensor(mongoengine.Document):
     fecha_creacion = mongoengine.DateTimeField(default=datetime.now())
 
     tipo_evento = mongoengine.StringField()
-
     dispositivo_id = mongoengine.StringField()
     reported_at = mongoengine.StringField()
+    usuario_propietario = mongoengine.EmailField()
 
     def to_dict(self):
         return mongo_utils.mongo_to_dict(self)

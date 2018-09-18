@@ -2,5 +2,8 @@ uwsgi
 flask
 flask_restful
 flask_cors
+flask_sqlalchemy
+flask_jwt_extended
 mongoengine
 openpyxl
+passlib

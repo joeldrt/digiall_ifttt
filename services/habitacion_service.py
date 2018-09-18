@@ -26,7 +26,8 @@ def obtener_habitacion_por_id(habitacion_id: str) -> Habitacion:
 def agregar_extras_habitacion(habitacion_id: str, extras_habitacion: ExtrasHabitacion) -> Habitacion:
     habitacion = Habitacion.objects().get(id=habitacion_id)
 
-    habitacion.update(set__extras=extras_habitacion)
+    habitacion.extras = extras_habitacion
+    habitacion.save()
 
     habitacion = Habitacion.objects().get(id=habitacion_id)
 
