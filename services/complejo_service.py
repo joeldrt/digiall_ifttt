@@ -2,7 +2,7 @@ from data.complejo import Complejo
 from datetime import datetime
 
 
-def agregar(usuario_propietario: str, nombre: str, direccion: str, telefonos: [str], latitud: float, longitud: float) \
+def agregar(usuario_propietario: str, nombre: str, direccion: str, telefonos: [str], latitud: str, longitud: str) \
         -> Complejo:
     complejo = Complejo()
     complejo.fecha_creacion = datetime.now()
@@ -10,8 +10,10 @@ def agregar(usuario_propietario: str, nombre: str, direccion: str, telefonos: [s
     complejo.nombre = nombre
     complejo.direccion = direccion
     complejo.telefonos = telefonos
-    complejo.latitud = latitud
-    complejo.longitud = longitud
+    if latitud:
+        complejo.latitud = float(latitud)
+    if longitud:
+        complejo.longitud = float(longitud)
     if longitud and latitud:
         complejo.posicion_geografica = [longitud, latitud]
 
@@ -41,13 +43,16 @@ def complejo_le_pertenece_a_propietario(usuario_propietario: str,complejo_id: st
 
 
 def editar_complejo(complejo_id: str, nombre: str, direccion: str, telefonos: [str],
-                    latitud: float, longitud: float) -> Complejo:
+                    latitud: str, longitud: str) -> Complejo:
     complejo = Complejo.objects().get(id=complejo_id)
     complejo.nombre = nombre
     complejo.direccion = direccion
     complejo.telefonos = telefonos
-    complejo.latitud = latitud
-    complejo.longitud = longitud
-    complejo.posicion_geografica = [longitud, latitud]
+    if latitud:
+        complejo.latitud = float(latitud)
+    if longitud:
+        complejo.longitud = float(longitud)
+    if longitud and latitud:
+        complejo.posicion_geografica = [longitud, latitud]
     complejo = complejo.save()
     return complejo

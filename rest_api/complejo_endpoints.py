@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse
+from flask_restful import Resource, reqparse, request
 from flask_jwt_extended import (jwt_required,
                                 get_jwt_identity)
 
@@ -56,6 +56,7 @@ class EditarComplejo(Resource):
     @jwt_required
     def put(self, complejo_id):
         usuario_propietario = get_jwt_identity()
+
         data = editar_complejo_parser.parse_args()
 
         if not complejo_id:
