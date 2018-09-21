@@ -64,9 +64,10 @@ from rest_api.ifttt_endpoints import HelloWorld, SensorActivado, SensorNormal, S
 from rest_api.user_endpoints import UserLogin, Account
 from rest_api.complejo_endpoints import GuardarComplejo, EditarComplejo, ObtenerComplejos, ObtenerComplejoPorId, \
     BorrarComplejoPorId
-from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, ObtenerHabitacionPorId, \
-    GuardarExtrasHabitacion
-from rest_api.sensor_endpoint import GuardarSensor, BorrarSensor, DispositivosSinRegistrar
+from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, EditarHabitacion, \
+    ObtenerHabitacionPorId, BorrarHabitacionPorId, ObtenerHabitacionesPorComplejoId
+from rest_api.sensor_endpoint import GuardarSensor, EditarSensor, ObtenerSensores, ObtenerSensorPorId, BorrarSensor, \
+    DispositivosSinRegistrar, ObtenerSensoresPorIds
 
 # ifttt
 api.add_resource(HelloWorld, '/api/helloworld')
@@ -89,12 +90,18 @@ api.add_resource(BorrarComplejoPorId, '/api/app/user/complejos/<string:complejo_
 # habitaciones
 api.add_resource(GuardarHabitacion, '/api/app/user/habitaciones')
 api.add_resource(ObtenerHabitaciones, '/api/app/user/habitaciones')
+api.add_resource(EditarHabitacion, '/api/app/user/habitaciones/<string:habitacion_id>')
 api.add_resource(ObtenerHabitacionPorId, '/api/app/user/habitaciones/<string:habitacion_id>')
-api.add_resource(GuardarExtrasHabitacion, '/api/app/user/habitaciones/<string:habitacion_id>/extras')
+api.add_resource(BorrarHabitacionPorId, '/api/app/user/habitaciones/<string:habitacion_id>')
+api.add_resource(ObtenerHabitacionesPorComplejoId, '/api/app/user/habitaciones_complejo/<string:complejo_id>')
 
 # sensores
 api.add_resource(GuardarSensor, '/api/app/user/sensores')
+api.add_resource(ObtenerSensores, '/api/app/user/sensores')
+api.add_resource(ObtenerSensorPorId, '/api/app/user/sensores/<string:sensor_id>')
+api.add_resource(EditarSensor, '/api/app/user/sensores/<string:sensor_id>')
 api.add_resource(BorrarSensor, '/api/app/user/sensores/<string:sensor_id>')
+api.add_resource(ObtenerSensoresPorIds, '/api/app/user/sensores_batch')
 
 # dispositivos
 api.add_resource(DispositivosSinRegistrar, '/api/app/user/dispositivos_sin_registrar')

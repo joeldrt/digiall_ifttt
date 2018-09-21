@@ -22,5 +22,8 @@ class Complejo(mongoengine.Document):
 
     meta = {
         'db_alias': 'ifttt',
-        'collection': 'complejo'
+        'collection': 'complejo',
+        'indexes': [
+            {'fields': ('usuario_propietario', 'nombre'), 'unique': True}
+        ]
     }
