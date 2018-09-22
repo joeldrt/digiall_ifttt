@@ -10,7 +10,6 @@ guardar_habitacion_parser.add_argument('complejo_id', type=str, required=True)
 guardar_habitacion_parser.add_argument('nombre', type=str, required=True)
 guardar_habitacion_parser.add_argument('tipo', type=str)
 guardar_habitacion_parser.add_argument('precio_base', type=float)
-guardar_habitacion_parser.add_argument('dispositivos_ids', action='append')
 guardar_habitacion_parser.add_argument('usa_servicio_doble_sensor', type=bool)
 guardar_habitacion_parser.add_argument('dispositivos_ids_servicio_doble', action='append')
 guardar_habitacion_parser.add_argument('hora_extra', type=float)
@@ -27,7 +26,6 @@ class GuardarHabitacion(Resource):
         nombre = data['nombre']
         tipo = data['tipo']
         precio_base = data['precio_base']
-        dispositivos_ids = data['dispositivos_ids']
         usa_servicio_doble_sensor = data['usa_servicio_doble_sensor']
         dispositivos_ids_servicio_doble = data['dispositivos_ids_servicio_doble']
         hora_extra = data['hora_extra']
@@ -39,7 +37,6 @@ class GuardarHabitacion(Resource):
                                                     nombre=nombre,
                                                     tipo=tipo,
                                                     precio_base=precio_base,
-                                                    dispositivos_ids=dispositivos_ids,
                                                     usa_servicio_doble_sensor=usa_servicio_doble_sensor,
                                                     dispositivos_ids_servicio_doble=dispositivos_ids_servicio_doble,
                                                     hora_extra=hora_extra,
@@ -56,7 +53,6 @@ editar_habitacion_parser.add_argument('complejo_id', type=str, required=True)
 editar_habitacion_parser.add_argument('nombre', type=str, required=True)
 editar_habitacion_parser.add_argument('tipo', type=str)
 editar_habitacion_parser.add_argument('precio_base', type=float)
-editar_habitacion_parser.add_argument('dispositivos_ids', action='append')
 editar_habitacion_parser.add_argument('usa_servicio_doble_sensor', type=bool)
 editar_habitacion_parser.add_argument('dispositivos_ids_servicio_doble', action='append')
 editar_habitacion_parser.add_argument('hora_extra', type=float)
@@ -77,7 +73,6 @@ class EditarHabitacion(Resource):
         nombre = data['nombre']
         tipo = data['tipo']
         precio_base = data['precio_base']
-        dispositivos_ids = data['dispositivos_ids']
         usa_servicio_doble_sensor = data['usa_servicio_doble_sensor']
         dispositivos_ids_servicio_doble = data['dispositivos_ids_servicio_doble']
         hora_extra = data['hora_extra']
@@ -88,7 +83,6 @@ class EditarHabitacion(Resource):
                                                    nombre=nombre,
                                                    tipo=tipo,
                                                    precio_base=precio_base,
-                                                   dispositivos_ids=dispositivos_ids,
                                                    usa_servicio_doble_sensor=usa_servicio_doble_sensor,
                                                    dispositivos_ids_servicio_doble=dispositivos_ids_servicio_doble,
                                                    hora_extra=hora_extra,

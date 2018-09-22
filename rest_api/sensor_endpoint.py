@@ -35,6 +35,7 @@ class GuardarSensor(Resource):
 
 
 editar_sensor_parser = reqparse.RequestParser(bundle_errors=True)
+editar_sensor_parser.add_argument('habitacion_id', type=str)
 editar_sensor_parser.add_argument('dispositivo_id', type=str, required=True)
 editar_sensor_parser.add_argument('nombre', type=str, required=True)
 editar_sensor_parser.add_argument('tipo_sensor', type=str, required=True)
@@ -46,6 +47,7 @@ class EditarSensor(Resource):
         usuario_propietario = get_jwt_identity()
 
         data = editar_sensor_parser.parse_args()
+        habitacion_id = data['habitacion_id']
         dispositivo_id = data['dispositivo_id']
         nombre = data['nombre']
         tipo_sensor = data['tipo_sensor']
@@ -56,6 +58,7 @@ class EditarSensor(Resource):
 
         try:
             sensor = sensor_service.editar(sensor_id=sensor_id,
+                                           habitacion_id=habitacion_id,
                                            dispositivo_id=dispositivo_id,
                                            nombre=nombre,
                                            tipo_sensor=tipo_sensor)
@@ -89,12 +92,12 @@ class ObtenerSensorPorId(Resource):
 
         if not sensor_service.sensor_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
                                                                 sensor_id=sensor_id):
-            return {'message', 'El sensor no le pertenece al propietario'}, 403
+            return {'message': 'El sensor no le pertenece al propietario'}, 403
 
         try:
             sensor = sensor_service.obtener_sensor_por_id(sensor_id=sensor_id)
         except Exception as exception:
-            return {'message', 'Error del servidor al obtener el sensor'}, 500
+            return {'message': 'Error del servidor al obtener el sensor'}, 500
 
         return sensor.to_dict()
 
@@ -114,7 +117,7 @@ class ObtenerSensoresPorIds(Resource):
                 sensor.to_dict() for sensor in sensores_objs
             ]
         except Exception as exception:
-            return {'message', 'Error del servidor al obtener los sensores'}, 500
+            return {'message': 'Error del servidor al obtener los sensores'}, 500
 
         return sensores
 
@@ -126,12 +129,12 @@ class BorrarSensor(Resource):
 
         if not sensor_service.sensor_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
                                                                 sensor_id=sensor_id):
-            return {'message', 'El sensor no le pertenece al propietario'}, 403
+            return {'message': 'El sensor no le pertenece al propietario'}, 403
 
         try:
             respuesta = sensor_service.borrar_sensor_por_id(sensor_id=sensor_id)
         except Exception as exception:
-            return {'message', 'Error del servidor al borrar el sensor'}, 500
+            return {'message': 'Error del servidor al borrar el sensor'}, 500
 
         return {'message': respuesta}, 200
 
@@ -146,7 +149,43 @@ class DispositivosSinRegistrar(Resource):
                 usuario_propietario=usuario_propietario)
 
         except Exception as exception:
-            return {'message', 'Error del servidor al obtener los dispositivos'}, 500
+            return {'message': 'Error del servidor al obtener los dispositivos'}, 500
 
         return dispositivos_sin_registrar
+
+
+class ObtenerSensoresPorHabitacion(Resource):
+    @jwt_required
+    def get(self, habitacion_id):
+        usuario_propietario = get_jwt_identity()
+
+        try:
+            sensores_por_habitacion_obj = sensor_service.sensores_por_habitacion_id(usuario_propietario=usuario_propietario,
+                                                                                    habitacion_id=habitacion_id)
+
+            sensores_por_habitacion = [
+                sensor.to_dict() for sensor in sensores_por_habitacion_obj
+            ]
+        except Exception as exception:
+            return {'message': 'Error del servidor al recuperar los sensores por habitacion'}, 500
+
+        return sensores_por_habitacion
+
+
+class ObtenerSensoresSinVincular(Resource):
+    @jwt_required
+    def get(self):
+        usuario_propietario = get_jwt_identity()
+
+        try:
+            sensores_sin_vincular_obj = sensor_service.sensores_sin_vincular(usuario_propietario=usuario_propietario)
+
+            sensores_sin_vincular = [
+                sensor.to_dict() for sensor in sensores_sin_vincular_obj
+            ]
+
+        except Exception as exception:
+            return {'message': 'Error del servidor al obtener los sensores'}, 500
+
+        return sensores_sin_vincular
 

@@ -13,7 +13,6 @@ class Habitacion(mongoengine.Document):
     nombre = mongoengine.StringField()
     tipo = mongoengine.StringField()
     precio_base = mongoengine.DecimalField()
-    dispositivos_ids = mongoengine.ListField(mongoengine.StringField())
     usa_servicio_doble_sensor = mongoengine.BooleanField(default=False)
     dispositivos_ids_servicio_doble = mongoengine.ListField(mongoengine.StringField())
     hora_extra = mongoengine.DecimalField()
@@ -21,6 +20,12 @@ class Habitacion(mongoengine.Document):
 
     def to_dict(self):
         return mongo_utils.mongo_to_dict_1(self)
+
+    @mongoengine.queryset_manager
+    def objects(doc_cls, queryset):
+        # This may actually also be done by defining a default ordering for
+        # the document, but this illustrates the use of manager methods
+        return queryset.order_by('fecha_creacion')
 
     meta = {
         'db_alias': 'ifttt',

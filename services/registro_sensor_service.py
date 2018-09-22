@@ -56,10 +56,10 @@ def listar_dispositivos_id_por_usuario_propietario(usuario_propietario: str) -> 
 
 def listar_dispositivos_por_usuario_propietario_no_enlistados(usuario_propietario: str, dispositivos_ids: [str]) -> [str]:
     sensores_ids = [
-        registro.dispositivo_id for registro in RegistroSensor.objects(
+        registro for registro in RegistroSensor.objects(
             Q(usuario_propietario=usuario_propietario) &
-            Q(dispositivo_id__not__in=dispositivos_ids).distinct(field="dispositivo_id")
-        )
+            Q(dispositivo_id__not__in=dispositivos_ids)
+        ).distinct(field="dispositivo_id")
     ]
     return sensores_ids
 

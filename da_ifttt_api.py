@@ -60,17 +60,16 @@ def user_identity_lookup(user):
 # end
 
 
-from rest_api.ifttt_endpoints import HelloWorld, SensorActivado, SensorNormal, StatusEndPoint, TestSetupEndPoint
+from rest_api.ifttt_endpoints import SensorActivado, SensorNormal, StatusEndPoint, TestSetupEndPoint
 from rest_api.user_endpoints import UserLogin, Account
 from rest_api.complejo_endpoints import GuardarComplejo, EditarComplejo, ObtenerComplejos, ObtenerComplejoPorId, \
     BorrarComplejoPorId
 from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, EditarHabitacion, \
     ObtenerHabitacionPorId, BorrarHabitacionPorId, ObtenerHabitacionesPorComplejoId
 from rest_api.sensor_endpoint import GuardarSensor, EditarSensor, ObtenerSensores, ObtenerSensorPorId, BorrarSensor, \
-    DispositivosSinRegistrar, ObtenerSensoresPorIds
+    DispositivosSinRegistrar, ObtenerSensoresPorIds, ObtenerSensoresPorHabitacion, ObtenerSensoresSinVincular
 
 # ifttt
-api.add_resource(HelloWorld, '/api/helloworld')
 api.add_resource(SensorActivado, '/api/ifttt/v1/actions/sensoractivado')
 api.add_resource(SensorNormal, '/api/ifttt/v1/actions/sensornormal')
 api.add_resource(StatusEndPoint, '/api/ifttt/v1/status')
@@ -102,6 +101,8 @@ api.add_resource(ObtenerSensorPorId, '/api/app/user/sensores/<string:sensor_id>'
 api.add_resource(EditarSensor, '/api/app/user/sensores/<string:sensor_id>')
 api.add_resource(BorrarSensor, '/api/app/user/sensores/<string:sensor_id>')
 api.add_resource(ObtenerSensoresPorIds, '/api/app/user/sensores_batch')
+api.add_resource(ObtenerSensoresSinVincular, '/api/app/user/sensores_sin_vincular')
+api.add_resource(ObtenerSensoresPorHabitacion, '/api/app/user/sensores_por_habitacion/<string:habitacion_id>')
 
 # dispositivos
 api.add_resource(DispositivosSinRegistrar, '/api/app/user/dispositivos_sin_registrar')

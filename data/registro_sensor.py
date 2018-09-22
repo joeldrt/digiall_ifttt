@@ -18,6 +18,12 @@ class RegistroSensor(mongoengine.Document):
     def to_dict(self):
         return mongo_utils.mongo_to_dict(self)
 
+    @mongoengine.queryset_manager
+    def objects(doc_cls, queryset):
+        # This may actually also be done by defining a default ordering for
+        # the document, but this illustrates the use of manager methods
+        return queryset.order_by('fecha_creacion')
+
     meta = {
         'db_alias': 'ifttt',
         'collection': 'registro_sensor'

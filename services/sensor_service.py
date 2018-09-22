@@ -18,8 +18,9 @@ def agregar(usuario_propietario: str, dispositivo_id: str, nombre: str, tipo_sen
     return sensor
 
 
-def editar(sensor_id: str, dispositivo_id: str, nombre: str, tipo_sensor: str) -> Sensor:
+def editar(sensor_id: str, habitacion_id: str, dispositivo_id: str, nombre: str, tipo_sensor: str) -> Sensor:
     sensor = Sensor.objects().get(id=sensor_id)
+    sensor.habitacion_id = habitacion_id
     sensor.dispositivo_id = dispositivo_id
     sensor.nombre = nombre
     sensor.tipo_sensor = tipo_sensor
@@ -52,6 +53,14 @@ def dispositivos_id_sin_registrar_por_usuario_propietario(usuario_propietario: s
     return dispositivos_ids_sin_registrar
 
 
+def sensores_sin_vincular(usuario_propietario: str) -> [Sensor]:
+    sensores = Sensor.objects(
+        Q(usuario_propietario=usuario_propietario) &
+        Q(habitacion_id__exists=False)
+    )
+    return sensores
+
+
 def obtener_sensores_por_ids(usuario_propietario: str, sensores_ids: [str]) -> [Sensor]:
     sensores = Sensor.objects(
         Q(usuario_propietario=usuario_propietario) &
@@ -61,9 +70,13 @@ def obtener_sensores_por_ids(usuario_propietario: str, sensores_ids: [str]) -> [
 
 
 def sensores_por_usuario_propietario(usuario_propietario: str) -> [Sensor]:
-    sensores = [
-        sensor for sensor in Sensor.objects(usuario_propietario=usuario_propietario)
-    ]
+    sensores = Sensor.objects(usuario_propietario=usuario_propietario)
+    return sensores
+
+
+def sensores_por_habitacion_id(usuario_propietario: str, habitacion_id:str) -> [Sensor]:
+    sensores = Sensor.objects(usuario_propietario=usuario_propietario,
+                              habitacion_id=habitacion_id)
     return sensores
 
 
@@ -73,5 +86,27 @@ def sensor_le_pertenece_a_propietario(usuario_propietario: str, sensor_id: str) 
 
 
 def borrar_sensor_por_id(sensor_id: str) -> bool:
-    sensor = Sensor.objects().get(sensor_id=sensor_id)
+    sensor = Sensor.objects().get(id=sensor_id)
     return sensor.delete()
+
+
+def desvincular_sensores_batch(sensores: [Sensor]) -> bool:
+    for sensor in sensores:
+        try:
+            sensor.habitacion_id = None
+            sensor.save()
+        except Exception as exception:
+            continue
+
+    return True
+
+
+def borrar_sensores_batch(sensores_ids: [str]) -> bool:
+    sensores = Sensor.objects(Q(id__in=sensores_ids))
+    for sensor in sensores:
+        try:
+            sensor.delete()
+        except Exception as exception:
+            continue
+
+    return True

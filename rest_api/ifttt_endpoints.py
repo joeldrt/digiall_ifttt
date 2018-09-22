@@ -243,17 +243,17 @@ class TestSetupEndPoint(Resource):
                     "actions": {
                         "sensoractivado": {
                             "sensor_id": "SENSOR-CUARTO1",
-                            "reported_at": "EDIFICIO1"
+                            "reported_at": "admin@loaclhost.com;EDIFICIO1"
                         },
                         "sensornormal": {
                             "sensor_id": "SENSOR-CUARTO1",
-                            "reported_at": "EDIFICIO1"
+                            "reported_at": "admin@loaclhost.com;EDIFICIO1"
                         }
                     },
                     "actionRecordSkipping": {
                         "testaction": {
                             "sensor_id": "SENSOR-CUARTO-SKIP",
-                            "reported_at": "EDIFICIO-SKIP"
+                            "reported_at": "admin@loaclhost.com;EDIFICIO-SKIP"
                         }
                     }
                 }
