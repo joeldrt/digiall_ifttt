@@ -32,6 +32,8 @@ def mongo_to_dict_1(obj):
             return_data.append((field_name, mongo_to_dict_1(data)))
         elif isinstance(obj._fields[field_name], DecimalField):
             return_data.append((field_name, float(data)))
+        elif isinstance(obj._fields[field_name], BooleanField):
+            return_data.append((field_name, bool(data)))
 
     return dict(return_data)
 

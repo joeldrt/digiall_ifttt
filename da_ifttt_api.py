@@ -67,7 +67,8 @@ from rest_api.complejo_endpoints import GuardarComplejo, EditarComplejo, Obtener
 from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, EditarHabitacion, \
     ObtenerHabitacionPorId, BorrarHabitacionPorId, ObtenerHabitacionesPorComplejoId
 from rest_api.sensor_endpoint import GuardarSensor, EditarSensor, ObtenerSensores, ObtenerSensorPorId, BorrarSensor, \
-    DispositivosSinRegistrar, ObtenerSensoresPorIds, ObtenerSensoresPorHabitacion, ObtenerSensoresSinVincular
+    DispositivosSinRegistrar, ObtenerSensoresPorIds, ObtenerSensoresPorHabitacion, ObtenerSensoresSinVincular, \
+    AgregarSensorListaServicio, QuitarSensorListaServicio
 
 # ifttt
 api.add_resource(SensorActivado, '/api/ifttt/v1/actions/sensoractivado')
@@ -103,6 +104,8 @@ api.add_resource(BorrarSensor, '/api/app/user/sensores/<string:sensor_id>')
 api.add_resource(ObtenerSensoresPorIds, '/api/app/user/sensores_batch')
 api.add_resource(ObtenerSensoresSinVincular, '/api/app/user/sensores_sin_vincular')
 api.add_resource(ObtenerSensoresPorHabitacion, '/api/app/user/sensores_por_habitacion/<string:habitacion_id>')
+api.add_resource(AgregarSensorListaServicio, '/api/app/user/sensor_agregar_servicio/<string:sensor_id>')
+api.add_resource(QuitarSensorListaServicio, '/api/app/user/sensor_quitar_servicio/<string:sensor_id>')
 
 # dispositivos
 api.add_resource(DispositivosSinRegistrar, '/api/app/user/dispositivos_sin_registrar')

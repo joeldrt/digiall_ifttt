@@ -10,6 +10,7 @@ class Sensor(mongoengine.Document):
     usuario_propietario = mongoengine.EmailField(required=True)
     habitacion_id = mongoengine.StringField()
     dispositivo_id = mongoengine.StringField(required=True)
+    contribuye_servicio = mongoengine.BooleanField()
     nombre = mongoengine.StringField(required=True)
     tipo_sensor = mongoengine.StringField()
 

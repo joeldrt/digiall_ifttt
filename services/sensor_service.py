@@ -18,12 +18,14 @@ def agregar(usuario_propietario: str, dispositivo_id: str, nombre: str, tipo_sen
     return sensor
 
 
-def editar(sensor_id: str, habitacion_id: str, dispositivo_id: str, nombre: str, tipo_sensor: str) -> Sensor:
-    sensor = Sensor.objects().get(id=sensor_id)
+def editar(sensor_id: str, habitacion_id: str, dispositivo_id: str, nombre: str, tipo_sensor: str,
+           contribuye_servicio: bool) -> Sensor:
+    sensor = Sensor.objects.get(id=sensor_id)
     sensor.habitacion_id = habitacion_id
     sensor.dispositivo_id = dispositivo_id
     sensor.nombre = nombre
     sensor.tipo_sensor = tipo_sensor
+    sensor.contribuye_servicio = contribuye_servicio
 
     sensor.save()
 
@@ -31,7 +33,7 @@ def editar(sensor_id: str, habitacion_id: str, dispositivo_id: str, nombre: str,
 
 
 def obtener_sensor_por_id(sensor_id: str) -> Sensor:
-    sensor = Sensor.objects().get(id=sensor_id)
+    sensor = Sensor.objects.get(id=sensor_id)
     return sensor
 
 
@@ -81,19 +83,34 @@ def sensores_por_habitacion_id(usuario_propietario: str, habitacion_id:str) -> [
 
 
 def sensor_le_pertenece_a_propietario(usuario_propietario: str, sensor_id: str) -> bool:
-    sensor = Sensor.objects().get(id=sensor_id)
+    sensor = Sensor.objects.get(id=sensor_id)
     return sensor.usuario_propietario == usuario_propietario
 
 
 def borrar_sensor_por_id(sensor_id: str) -> bool:
-    sensor = Sensor.objects().get(id=sensor_id)
+    sensor = Sensor.objects.get(id=sensor_id)
     return sensor.delete()
+
+
+def activar_sensor_contribuye_servicio(sensor_id: str) -> bool:
+    sensor = Sensor.objects.get(id=sensor_id)
+    sensor.contribuye_servicio = True
+    sensor.save()
+    return True
+
+
+def desactivar_sensor_contribuye_servicio(sensor_id: str) -> bool:
+    sensor = Sensor.objects.get(id=sensor_id)
+    sensor.contribuye_servicio = False
+    sensor.save()
+    return True
 
 
 def desvincular_sensores_batch(sensores: [Sensor]) -> bool:
     for sensor in sensores:
         try:
             sensor.habitacion_id = None
+            sensor.contribuye_servicio = False
             sensor.save()
         except Exception as exception:
             continue

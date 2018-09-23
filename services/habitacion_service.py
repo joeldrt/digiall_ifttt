@@ -5,7 +5,6 @@ from services import sensor_service
 
 
 def agregar(usuario_propietario: str, complejo_id: str, nombre: str, tipo: str, precio_base: str,
-            usa_servicio_doble_sensor: bool, dispositivos_ids_servicio_doble: [str],
             hora_extra: str, persona_extra: str) -> Habitacion:
     habitacion = Habitacion()
     habitacion.fecha_creacion = datetime.now()
@@ -14,8 +13,6 @@ def agregar(usuario_propietario: str, complejo_id: str, nombre: str, tipo: str, 
     habitacion.nombre = nombre
     habitacion.tipo = tipo
     habitacion.precio_base = float(precio_base) if precio_base else None
-    habitacion.usa_servicio_doble_sensor = usa_servicio_doble_sensor
-    habitacion.dispositivos_ids_servicio_doble = dispositivos_ids_servicio_doble
     habitacion.hora_extra = float(hora_extra) if hora_extra else None
     habitacion.persona_extra = float(persona_extra) if persona_extra else None
 
@@ -24,14 +21,12 @@ def agregar(usuario_propietario: str, complejo_id: str, nombre: str, tipo: str, 
     return habitacion
 
 
-def editar(habitacion_id: str, nombre: str, tipo: str, precio_base: str, usa_servicio_doble_sensor: bool,
-           dispositivos_ids_servicio_doble: [str], hora_extra: str, persona_extra: str) -> Habitacion:
+def editar(habitacion_id: str, nombre: str, tipo: str, precio_base: str, hora_extra: str,
+           persona_extra: str) -> Habitacion:
     habitacion = Habitacion.objects().get(id=habitacion_id)
     habitacion.nombre = nombre
     habitacion.tipo = tipo
     habitacion.precio_base = float(precio_base) if precio_base else None
-    habitacion.usa_servicio_doble_sensor = usa_servicio_doble_sensor
-    habitacion.dispositivos_ids_servicio_doble = dispositivos_ids_servicio_doble
     habitacion.hora_extra = float(hora_extra) if hora_extra else None
     habitacion.persona_extra = float(persona_extra) if persona_extra else None
 

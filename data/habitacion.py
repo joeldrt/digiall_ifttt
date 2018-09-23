@@ -13,8 +13,6 @@ class Habitacion(mongoengine.Document):
     nombre = mongoengine.StringField()
     tipo = mongoengine.StringField()
     precio_base = mongoengine.DecimalField()
-    usa_servicio_doble_sensor = mongoengine.BooleanField(default=False)
-    dispositivos_ids_servicio_doble = mongoengine.ListField(mongoengine.StringField())
     hora_extra = mongoengine.DecimalField()
     persona_extra = mongoengine.DecimalField()
 

@@ -39,6 +39,7 @@ editar_sensor_parser.add_argument('habitacion_id', type=str)
 editar_sensor_parser.add_argument('dispositivo_id', type=str, required=True)
 editar_sensor_parser.add_argument('nombre', type=str, required=True)
 editar_sensor_parser.add_argument('tipo_sensor', type=str, required=True)
+editar_sensor_parser.add_argument('contribuye_servicio', type=bool)
 
 
 class EditarSensor(Resource):
@@ -51,6 +52,7 @@ class EditarSensor(Resource):
         dispositivo_id = data['dispositivo_id']
         nombre = data['nombre']
         tipo_sensor = data['tipo_sensor']
+        contribuye_servicio = data['contribuye_servicio']
 
         if not sensor_service.sensor_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
                                                                 sensor_id=sensor_id):
@@ -61,7 +63,8 @@ class EditarSensor(Resource):
                                            habitacion_id=habitacion_id,
                                            dispositivo_id=dispositivo_id,
                                            nombre=nombre,
-                                           tipo_sensor=tipo_sensor)
+                                           tipo_sensor=tipo_sensor,
+                                           contribuye_servicio=contribuye_servicio)
         except Exception as exception:
             return {'message': 'Error del servidor al editar el registro'}, 500
 
@@ -189,3 +192,48 @@ class ObtenerSensoresSinVincular(Resource):
 
         return sensores_sin_vincular
 
+
+class AgregarSensorListaServicio(Resource):
+    @jwt_required
+    def put(self, sensor_id):
+        usuario_propietario = get_jwt_identity()
+
+        try:
+            if not sensor_service.sensor_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
+                                                                    sensor_id=sensor_id):
+                return {'message': 'El sensor no le pertence al propietario'}, 403
+
+        except Exception as exception:
+            return {'message': 'Error del servidor al agregar un sensor a la lista de servicio'}, 500
+
+        try:
+            if not sensor_service.activar_sensor_contribuye_servicio(sensor_id=sensor_id):
+                return {'message': 'Error al activar el switch de contribuye servicio'}, 500
+
+        except Exception as exception:
+            return {'message': 'Error del servidor al agregar un sensor a la lista de servicio'}, 500
+
+        return {'message': 'Sensor agregado a la lista de servicio'}, 200
+
+
+class QuitarSensorListaServicio(Resource):
+    @jwt_required
+    def put(self, sensor_id):
+        usuario_propietario = get_jwt_identity()
+
+        try:
+            if not sensor_service.sensor_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
+                                                                    sensor_id=sensor_id):
+                return {'message': 'El sensor no le pertence al propietario'}, 403
+
+        except Exception as exception:
+            return {'message': 'Error del servidor al quitar un sensor a la lista de servicio'}, 500
+
+        try:
+            if not sensor_service.desactivar_sensor_contribuye_servicio(sensor_id=sensor_id):
+                return {'message': 'Error al desactivar el switch de contribuye servicio'}, 500
+
+        except Exception as exception:
+            return {'message': 'Error del servidor al quitar un sensor a la lista de servicio'}, 500
+
+        return {'message': 'Sensor borrado de la lista de servicio'}, 200

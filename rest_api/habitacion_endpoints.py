@@ -11,7 +11,6 @@ guardar_habitacion_parser.add_argument('nombre', type=str, required=True)
 guardar_habitacion_parser.add_argument('tipo', type=str)
 guardar_habitacion_parser.add_argument('precio_base', type=float)
 guardar_habitacion_parser.add_argument('usa_servicio_doble_sensor', type=bool)
-guardar_habitacion_parser.add_argument('dispositivos_ids_servicio_doble', action='append')
 guardar_habitacion_parser.add_argument('hora_extra', type=float)
 guardar_habitacion_parser.add_argument('persona_extra', type=float)
 
@@ -26,8 +25,6 @@ class GuardarHabitacion(Resource):
         nombre = data['nombre']
         tipo = data['tipo']
         precio_base = data['precio_base']
-        usa_servicio_doble_sensor = data['usa_servicio_doble_sensor']
-        dispositivos_ids_servicio_doble = data['dispositivos_ids_servicio_doble']
         hora_extra = data['hora_extra']
         persona_extra = data['persona_extra']
 
@@ -37,13 +34,11 @@ class GuardarHabitacion(Resource):
                                                     nombre=nombre,
                                                     tipo=tipo,
                                                     precio_base=precio_base,
-                                                    usa_servicio_doble_sensor=usa_servicio_doble_sensor,
-                                                    dispositivos_ids_servicio_doble=dispositivos_ids_servicio_doble,
                                                     hora_extra=hora_extra,
                                                     persona_extra=persona_extra)
 
         except Exception as exception:
-            return {'message': 'Error al guardar en la base de datos'}, 500
+            return {'message': 'Error del servidor al guardar la habitación'}, 500
 
         return habitacion.to_dict()
 
@@ -53,8 +48,6 @@ editar_habitacion_parser.add_argument('complejo_id', type=str, required=True)
 editar_habitacion_parser.add_argument('nombre', type=str, required=True)
 editar_habitacion_parser.add_argument('tipo', type=str)
 editar_habitacion_parser.add_argument('precio_base', type=float)
-editar_habitacion_parser.add_argument('usa_servicio_doble_sensor', type=bool)
-editar_habitacion_parser.add_argument('dispositivos_ids_servicio_doble', action='append')
 editar_habitacion_parser.add_argument('hora_extra', type=float)
 editar_habitacion_parser.add_argument('persona_extra', type=float)
 
@@ -73,8 +66,6 @@ class EditarHabitacion(Resource):
         nombre = data['nombre']
         tipo = data['tipo']
         precio_base = data['precio_base']
-        usa_servicio_doble_sensor = data['usa_servicio_doble_sensor']
-        dispositivos_ids_servicio_doble = data['dispositivos_ids_servicio_doble']
         hora_extra = data['hora_extra']
         persona_extra = data['persona_extra']
 
@@ -83,13 +74,11 @@ class EditarHabitacion(Resource):
                                                    nombre=nombre,
                                                    tipo=tipo,
                                                    precio_base=precio_base,
-                                                   usa_servicio_doble_sensor=usa_servicio_doble_sensor,
-                                                   dispositivos_ids_servicio_doble=dispositivos_ids_servicio_doble,
                                                    hora_extra=hora_extra,
                                                    persona_extra=persona_extra)
 
         except Exception as exception:
-            return {'message': exception}, 500
+            return {'message': 'Error del servidor al editar la habitación'}, 500
 
         return habitacion.to_dict()
 
@@ -132,9 +121,9 @@ class BorrarHabitacionPorId(Resource):
                                                            habitacion_id=habitacion_id):
                 return {'message': 'Complejo Borrado'}, 200
             else:
-                return {'message': 'Error al borrar el complejo'}, 500
+                return {'message': 'Error al borrar la habitación'}, 500
         except Exception as exception:
-            return {'message': exception}, 500
+            return {'message': 'Error del servidor al borrar la habitación'}, 500
 
 
 class ObtenerHabitacionesPorComplejoId(Resource):
