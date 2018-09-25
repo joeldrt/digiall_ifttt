@@ -1,30 +1,41 @@
 from flask import request, send_from_directory
-from flask_restful import Resource
-from datetime import datetime, timedelta
-
-from data.registro_sensor import RegistroSensor
-from mongoengine.queryset.visitor import Q
-
+from flask_restful import Resource, reqparse
+from flask_jwt_extended import (jwt_required, get_jwt_identity)
 from openpyxl import Workbook
 
-TODAS = 'TODAS'
+from data.registro_sensor import RegistroSensor
+from services import registro_sensor_service, habitacion_service
 
 
-class ObtenerHabitaciones(Resource):
-    def get(self):
-        complejo = str(request.args.get('complejo'))
-        habitaciones = RegistroSensor.objects(complejo=complejo).distinct('habitacion')
-        return habitaciones
+obtener_registros_por_habitacion_parser = reqparse.RequestParser(bundle_errors=True)
+obtener_registros_por_habitacion_parser.add_argument('fecha_inicial', type=str, location='args')
+obtener_registros_por_habitacion_parser.add_argument('fecha_final', type=str, location='args')
 
 
-class MostrarRegistros(Resource):
-    def get(self):
-        fecha_inicial = str(request.args.get('fecha_inicial'))
-        fecha_final = str(request.args.get('fecha_final'))
-        complejo = str(request.args.get('complejo'))
-        habitacion = str(request.args.get('habitacion'))
+class ObtenerRegistrosPorHabitacion(Resource):
+    @jwt_required
+    def get(self, habitacion_id):
+        usuario_propietario = get_jwt_identity()
 
-        registros = get_registros(fecha_inicial, fecha_final, complejo, habitacion)
+        if not habitacion_service.habitacion_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
+                                                                        habitacion_id=habitacion_id):
+            return {'message': 'La habitación no es del propietario'}, 403
+
+        data = obtener_registros_por_habitacion_parser.parse_args()
+
+        fecha_inicial = data['fecha_inicial']
+        fecha_final = data['fecha_final']
+
+        try:
+            registros_objs = registro_sensor_service.obtener_todos_entre_fechas_por_habitacion(habitacion_id=habitacion_id,
+                                                                                              fecha_inicial=fecha_inicial,
+                                                                                              fecha_final=fecha_final)
+
+            registros = [
+                registro.to_dict() for registro in registros_objs
+            ]
+        except Exception as exception:
+            return {'message': 'Error del servidor al obtener los registros por habitación'}, 500
 
         return registros
 
@@ -36,7 +47,7 @@ class CreateExcelFile(Resource):
         complejo = str(request.args.get('complejo'))
         habitacion = str(request.args.get('habitacion'))
 
-        registros = get_registros(fecha_inicial, fecha_final, complejo, habitacion)
+        registros = registro_sensor_service.obtener_todos_entre_fechas_por_habitacion()
 
         wb = Workbook()
         ws = wb.active

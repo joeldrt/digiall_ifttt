@@ -74,3 +74,16 @@ def obtener_todos_entre_fechas(fecha_inicial: str, fecha_final: str) -> [Registr
     )
 
     return registros
+
+
+def obtener_todos_entre_fechas_por_habitacion(habitacion_id: str, fecha_inicial: str, fecha_final: str) -> [RegistroSensor]:
+    fecha_inicial_date = datetime.strptime(fecha_inicial, '%Y-%m-%d')
+    fecha_final_date = datetime.strptime(fecha_final, '%Y-%m-%d') + timedelta(days=1)
+
+    registros = RegistroSensor.objects(
+        Q(fecha_creacion__gte=fecha_inicial_date) &
+        Q(fecha_creacion__lte=fecha_final_date) &
+        Q(habitacion_id__exact=habitacion_id)
+    )
+
+    return registros
