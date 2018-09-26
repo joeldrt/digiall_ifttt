@@ -7,7 +7,6 @@ from services import habitacion_service
 def agregar(usuario_propietario: str, nombre: str, direccion: str, telefonos: [str], latitud: str, longitud: str) \
         -> Complejo:
     complejo = Complejo()
-    complejo.fecha_creacion = datetime.now()
     complejo.usuario_propietario = usuario_propietario
     complejo.nombre = nombre
     complejo.direccion = direccion
@@ -55,3 +54,12 @@ def editar_complejo(complejo_id: str, nombre: str, direccion: str, telefonos: [s
         complejo.posicion_geografica = [longitud, latitud]
     complejo = complejo.save()
     return complejo
+
+
+def numero_de_servicios_por_complejo(usuario_propietario: str, complejo_id: str,
+                                     fecha_inicial: str, fecha_final: str) -> int:
+    habitaciones = habitacion_service.obtener_habitaciones_por_complejo(complejo_id=complejo_id)
+    for habitacion in habitaciones:
+        habitacion_service.obtener_servicios_por_habitacion(habitacion_id=str(habitacion.id),
+                                                            fecha_inicial=fecha_inicial,
+                                                            fecha_final=fecha_final)

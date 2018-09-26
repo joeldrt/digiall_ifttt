@@ -8,7 +8,7 @@ class RegistroSensor(mongoengine.Document):
     ABIERTO = 'ABIERTO'
     CERRADO = 'CERRADO'
 
-    fecha_creacion = mongoengine.DateTimeField(default=datetime.now())
+    fecha_creacion = mongoengine.DateTimeField(default=datetime.now)
 
     tipo_evento = mongoengine.StringField()
     dispositivo_id = mongoengine.StringField()

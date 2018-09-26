@@ -7,7 +7,6 @@ from mongoengine.queryset.visitor import Q
 
 def agregar(usuario_propietario: str, dispositivo_id: str, nombre: str, tipo_sensor: str) -> Sensor:
     sensor = Sensor()
-    sensor.fecha_creacion = datetime.now()
     sensor.usuario_propietario = usuario_propietario
     sensor.dispositivo_id = dispositivo_id
     sensor.nombre = nombre
@@ -67,6 +66,19 @@ def obtener_sensores_por_ids(usuario_propietario: str, sensores_ids: [str]) -> [
     sensores = Sensor.objects(
         Q(usuario_propietario=usuario_propietario) &
         Q(id__in=sensores_ids)
+    )
+    return sensores
+
+
+def obtener_sensores_por_habitacion(habitacion_id: str) -> [Sensor]:
+    sensores = Sensor.objects(habitacion_id=habitacion_id)
+    return sensores
+
+
+def obtener_sensores_de_servicio_por_habitacion(habitacion_id: str) -> [Sensor]:
+    sensores = Sensor.objects(
+        Q(habitacion_id=habitacion_id) &
+        Q(contribuye_servicio=True)
     )
     return sensores
 

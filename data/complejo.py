@@ -5,7 +5,7 @@ import data.mongo_digiall_utils as mongo_utils
 
 
 class Complejo(mongoengine.Document):
-    fecha_creacion = mongoengine.DateTimeField(default=datetime.now())
+    fecha_creacion = mongoengine.DateTimeField(default=datetime.now)
 
     usuario_propietario = mongoengine.EmailField()
 

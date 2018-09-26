@@ -3,10 +3,11 @@ from datetime import datetime, timedelta
 
 from mongoengine.queryset.visitor import Q
 
+from services import sensor_service
+
 
 def registrar(usuario_propietario: str, tipo_evento: str, dispositivo_id: str, reported_at: str) -> RegistroSensor:
     registro_sensor = RegistroSensor()
-    registro_sensor.fecha_creacion = datetime.now()
     registro_sensor.tipo_evento = tipo_evento
     registro_sensor.dispositivo_id = dispositivo_id
     registro_sensor.reported_at = reported_at
@@ -80,10 +81,42 @@ def obtener_todos_entre_fechas_por_habitacion(habitacion_id: str, fecha_inicial:
     fecha_inicial_date = datetime.strptime(fecha_inicial, '%Y-%m-%d')
     fecha_final_date = datetime.strptime(fecha_final, '%Y-%m-%d') + timedelta(days=1)
 
+    sensores_de_habitacion = sensor_service.obtener_sensores_por_habitacion(habitacion_id=habitacion_id)
+
+    dispositivos_ids = [
+        sensor.dispositivo_id for sensor in sensores_de_habitacion
+    ]
+
     registros = RegistroSensor.objects(
         Q(fecha_creacion__gte=fecha_inicial_date) &
         Q(fecha_creacion__lte=fecha_final_date) &
-        Q(habitacion_id__exact=habitacion_id)
+        Q(dispositivo_id__in=dispositivos_ids)
     )
 
     return registros
+
+
+def obtener_todos_entre_fechas_por_dispositivos_ids(dispositivos_ids: [str], fecha_inicial: str,
+                                                    fecha_final: str) -> [RegistroSensor]:
+    fecha_inicial_date = datetime.strptime(fecha_inicial, '%Y-%m-%d')
+    fecha_final_date = datetime.strptime(fecha_final, '%Y-%m-%d') + timedelta(days=1)
+
+    registros = RegistroSensor.objects(
+        Q(fecha_creacion__gte=fecha_inicial_date) &
+        Q(fecha_creacion__lte=fecha_final_date) &
+        Q(dispositivo_id__in=dispositivos_ids)
+    )
+
+    return registros
+
+
+def obtener_registro_inmediato_anterior_fecha_por_dispositivo_id(dispositivo_id: str, fecha: datetime) -> RegistroSensor:
+    registros = RegistroSensor.objects(
+        Q(fecha_creacion__lte=fecha) &
+        Q(dispositivo_id=dispositivo_id)
+    ).order_by('-fecha_creacion')
+
+    if len(registros) > 0:
+        return registros[0]
+
+    return None

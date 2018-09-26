@@ -88,12 +88,15 @@ class ObtenerHabitaciones(Resource):
     def get(self):
         usuario_propietario = get_jwt_identity()
 
-        habitaciones_objs = habitacion_service.obtener_habitaciones_por_usuario_propietario(
-            usuario_propietario=usuario_propietario)
+        try:
+            habitaciones_objs = habitacion_service.obtener_habitaciones_por_usuario_propietario(
+                usuario_propietario=usuario_propietario)
 
-        habitaciones = [
-            habitacion.to_dict() for habitacion in habitaciones_objs
-        ]
+            habitaciones = [
+                habitacion.to_dict() for habitacion in habitaciones_objs
+            ]
+        except Exception as exception:
+            return {'message': 'Error al obtener habitaciones por propietario'}, 500
 
         return habitaciones
 
@@ -107,8 +110,12 @@ class ObtenerHabitacionPorId(Resource):
                                                                         habitacion_id=habitacion_id):
             return {'message': 'La habitación que se desea obtener no le pertenece al propietario'}, 403
 
-        habitacion = habitacion_service.obtener_habitacion_por_id(usuario_propietario=usuario_propietario,
-                                                                  habitacion_id=habitacion_id)
+        try:
+            habitacion = habitacion_service.obtener_habitacion_por_id(usuario_propietario=usuario_propietario,
+                                                                      habitacion_id=habitacion_id)
+        except Exception as exception:
+            return {'message': 'Error al obtener habitaciones por id'}, 500
+
         return habitacion.to_dict()
 
 
@@ -123,7 +130,7 @@ class BorrarHabitacionPorId(Resource):
             else:
                 return {'message': 'Error al borrar la habitación'}, 500
         except Exception as exception:
-            return {'message': 'Error del servidor al borrar la habitación'}, 500
+            return {'message': 'Error al borrar la habitación'}, 500
 
 
 class ObtenerHabitacionesPorComplejoId(Resource):
@@ -135,10 +142,41 @@ class ObtenerHabitacionesPorComplejoId(Resource):
                                                                     complejo_id=complejo_id):
             return {'message': 'El complejo no le pertenece al propietario'}, 403
 
-        habitaciones_objs = habitacion_service.obtener_habitaciones_por_complejo(complejo_id=complejo_id)
+        try:
+            habitaciones_objs = habitacion_service.obtener_habitaciones_por_complejo(complejo_id=complejo_id)
 
-        habitaciones = [
-            habitacion.to_dict() for habitacion in habitaciones_objs
-        ]
+            habitaciones = [
+                habitacion.to_dict() for habitacion in habitaciones_objs
+            ]
+        except Exception as exception:
+            return {'message': 'Error al recuperar las habitaciones por complejo'}, 500
 
         return habitaciones
+
+
+obtener_servicios_por_habitacion_parser = reqparse.RequestParser(bundle_errors=True)
+obtener_servicios_por_habitacion_parser.add_argument('fecha_inicial', type=str, required=True, location='args')
+obtener_servicios_por_habitacion_parser.add_argument('fecha_final', type=str, required=True, location='args')
+
+
+class ObtenerServiciosPorHabitacion(Resource):
+    @jwt_required
+    def get(self, habitacion_id):
+        usuario_propietario = get_jwt_identity()
+
+        data = obtener_servicios_por_habitacion_parser.parse_args()
+        fecha_inicial = data['fecha_inicial']
+        fecha_final = data['fecha_final']
+
+        if not habitacion_service.habitacion_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
+                                                                        habitacion_id=habitacion_id):
+            return {'message': 'La habitación no le pertenece al propietario'}, 403
+
+        try:
+            num_servicios = habitacion_service.obtener_servicios_por_habitacion(habitacion_id=habitacion_id,
+                                                                                fecha_inicial=fecha_inicial,
+                                                                                fecha_final=fecha_final)
+        except Exception as exception:
+            return {'message': 'Error al recuperar el numero de servicios por habitación'}, 500
+
+        return num_servicios

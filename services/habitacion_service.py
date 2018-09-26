@@ -1,13 +1,13 @@
 from data.habitacion import Habitacion
 from datetime import datetime
 
-from services import sensor_service
+from services import sensor_service, registro_sensor_service
+from brain import calculadora_servicios
 
 
 def agregar(usuario_propietario: str, complejo_id: str, nombre: str, tipo: str, precio_base: str,
             hora_extra: str, persona_extra: str) -> Habitacion:
     habitacion = Habitacion()
-    habitacion.fecha_creacion = datetime.now()
     habitacion.usuario_propietario = usuario_propietario
     habitacion.complejo_id = complejo_id
     habitacion.nombre = nombre
@@ -75,3 +75,30 @@ def borrar_habitaciones_por_complejo(complejo_id: str) -> bool:
         except Exception as ex:
             continue
     return True
+
+
+def obtener_servicios_por_habitacion(habitacion_id: str, fecha_inicial: str, fecha_final: str) -> dict:
+    sensores_de_servicio_objs = sensor_service.obtener_sensores_de_servicio_por_habitacion(habitacion_id=habitacion_id)
+    dispositivos_ids = [
+        sensor.dispositivo_id for sensor in sensores_de_servicio_objs
+    ]
+    if len(dispositivos_ids) == 0:
+        return {'numero_servicios': 0,
+                'ultimo_status': 'Desconocido'}
+
+    registros = registro_sensor_service.obtener_todos_entre_fechas_por_dispositivos_ids(dispositivos_ids=dispositivos_ids,
+                                                                                        fecha_inicial=fecha_inicial,
+                                                                                        fecha_final=fecha_final)
+
+    if len(registros) == 0:
+        return {'numero_servicios': 0,
+                'ultimo_status': 'Desconocido'}
+
+    (numero_servicios, ultimo_status) = calculadora_servicios.calcular(
+        registros=registros, dispositivos_ids=dispositivos_ids)
+
+    objeto = {'numero_servicios': numero_servicios,
+              'ultimo_status':
+                  ('Disponible' if calculadora_servicios.EstadoHabitacion.DISPONIBLE == ultimo_status else 'Servicio')}
+
+    return objeto
