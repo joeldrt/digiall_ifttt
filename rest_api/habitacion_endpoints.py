@@ -180,3 +180,36 @@ class ObtenerServiciosPorHabitacion(Resource):
             return {'message': 'Error al recuperar el numero de servicios por habitación'}, 500
 
         return num_servicios
+
+
+obtener_servicios_por_habitacion_parser = reqparse.RequestParser(bundle_errors=True)
+obtener_servicios_por_habitacion_parser.add_argument('fecha_inicial', type=str, required=True, location='args')
+obtener_servicios_por_habitacion_parser.add_argument('fecha_final', type=str, required=True, location='args')
+
+
+class ObtenerRegistrosPorHabitacion(Resource):
+    @jwt_required
+    def get(self, habitacion_id):
+        usuario_propietario = get_jwt_identity()
+
+        data = obtener_servicios_por_habitacion_parser.parse_args()
+        fecha_inicial = data['fecha_inicial']
+        fecha_final = data['fecha_final']
+
+        if not habitacion_service.habitacion_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
+                                                                        habitacion_id=habitacion_id):
+            return {'message': 'La habitación no le pertenece al propietario'}, 403
+
+        try:
+            registros_objs = habitacion_service.obtener_registros_por_habitacion(habitacion_id=habitacion_id,
+                                                                                 fecha_inicial=fecha_inicial,
+                                                                                 fecha_final=fecha_final)
+
+            registros = [
+                registro.to_dict() for registro in registros_objs
+            ]
+
+        except Exception as exception:
+            return {'message': 'Error al recuperar el numero de servicios por habitación'}, 500
+
+        return registros

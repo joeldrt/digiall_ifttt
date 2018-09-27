@@ -1,4 +1,5 @@
 from data.habitacion import Habitacion
+from data.registro_sensor import RegistroSensor
 from datetime import datetime
 
 from services import sensor_service, registro_sensor_service
@@ -86,9 +87,10 @@ def obtener_servicios_por_habitacion(habitacion_id: str, fecha_inicial: str, fec
         return {'numero_servicios': 0,
                 'ultimo_status': 'Desconocido'}
 
-    registros = registro_sensor_service.obtener_todos_entre_fechas_por_dispositivos_ids(dispositivos_ids=dispositivos_ids,
-                                                                                        fecha_inicial=fecha_inicial,
-                                                                                        fecha_final=fecha_final)
+    registros = registro_sensor_service.obtener_todos_entre_fechas_por_dispositivos_ids(
+        dispositivos_ids=dispositivos_ids,
+        fecha_inicial=fecha_inicial,
+        fecha_final=fecha_final)
 
     if len(registros) == 0:
         return {'numero_servicios': 0,
@@ -102,3 +104,19 @@ def obtener_servicios_por_habitacion(habitacion_id: str, fecha_inicial: str, fec
                   ('Disponible' if calculadora_servicios.EstadoHabitacion.DISPONIBLE == ultimo_status else 'Servicio')}
 
     return objeto
+
+
+def obtener_registros_por_habitacion(habitacion_id: str,fecha_inicial: str, fecha_final: str) -> [RegistroSensor]:
+    sensores_de_servicio_objs = sensor_service.obtener_sensores_de_servicio_por_habitacion(habitacion_id=habitacion_id)
+    dispositivos_ids = [
+        sensor.dispositivo_id for sensor in sensores_de_servicio_objs
+    ]
+    if len(dispositivos_ids) == 0:
+        return []
+
+    registros = registro_sensor_service.obtener_todos_entre_fechas_por_dispositivos_ids(
+        dispositivos_ids=dispositivos_ids,
+        fecha_inicial=fecha_inicial,
+        fecha_final=fecha_final)
+
+    return registros

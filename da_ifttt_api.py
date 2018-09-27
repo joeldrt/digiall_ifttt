@@ -65,7 +65,8 @@ from rest_api.user_endpoints import UserLogin, Account
 from rest_api.complejo_endpoints import GuardarComplejo, EditarComplejo, ObtenerComplejos, ObtenerComplejoPorId, \
     BorrarComplejoPorId
 from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, EditarHabitacion, \
-    ObtenerHabitacionPorId, BorrarHabitacionPorId, ObtenerHabitacionesPorComplejoId, ObtenerServiciosPorHabitacion
+    ObtenerHabitacionPorId, BorrarHabitacionPorId, ObtenerHabitacionesPorComplejoId, ObtenerServiciosPorHabitacion, \
+    ObtenerRegistrosPorHabitacion
 from rest_api.sensor_endpoint import GuardarSensor, EditarSensor, ObtenerSensores, ObtenerSensorPorId, BorrarSensor, \
     DispositivosSinRegistrar, ObtenerSensoresPorIds, ObtenerSensoresPorHabitacion, ObtenerSensoresSinVincular, \
     AgregarSensorListaServicio, QuitarSensorListaServicio
@@ -95,6 +96,7 @@ api.add_resource(ObtenerHabitacionPorId, '/api/app/user/habitaciones/<string:hab
 api.add_resource(BorrarHabitacionPorId, '/api/app/user/habitaciones/<string:habitacion_id>')
 api.add_resource(ObtenerHabitacionesPorComplejoId, '/api/app/user/habitaciones_complejo/<string:complejo_id>')
 api.add_resource(ObtenerServiciosPorHabitacion, '/api/app/user/habitaciones_servicios/<string:habitacion_id>')
+api.add_resource(ObtenerRegistrosPorHabitacion, '/api/app/user/habitaciones_registros/<string:habitacion_id>')
 
 
 # sensores
