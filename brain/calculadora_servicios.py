@@ -113,7 +113,7 @@ def obtener_estado_inicial_de_dispositivo(dispositivo_id: str, registros: [Regis
 
 def calcular2(registros: [RegistroSensor], dispositivos_ids: [str]) -> (int, EstadoHabitacion):
     # generar matrix de 1 y 0 dependiendo del estatus por tiempo en base a los registros
-    # en cada nuevo ingreso solo se modifica el
+    # en cada nuevo ingreso solo se modifica el estado de ese sensor los demás permanecen es su estado anterior
     estado_anterior_dispositivos = {}
     tabla = []
     for registro in registros:

@@ -6,14 +6,14 @@ from flask_jwt_extended import (create_access_token,
 
 import datetime
 
-parser = reqparse.RequestParser(bundle_errors=True)
-parser.add_argument('username')
-parser.add_argument('password')
-parser.add_argument('firstName')
-parser.add_argument('lastName')
-parser.add_argument('email')
-parser.add_argument('authorities', action='append')
-parser.add_argument('old_password')
+user_registration_parser = reqparse.RequestParser(bundle_errors=True)
+user_registration_parser.add_argument('username')
+user_registration_parser.add_argument('password', required=True)
+user_registration_parser.add_argument('firstName', required=True)
+user_registration_parser.add_argument('lastName')
+user_registration_parser.add_argument('email', required=True)
+user_registration_parser.add_argument('authorities', action='append')
+user_registration_parser.add_argument('old_password')
 
 
 class UserRegistration(Resource):
@@ -21,13 +21,13 @@ class UserRegistration(Resource):
     def post(self):
         claims = get_jwt_claims()
 
-        if 'admin' not in claims['authorities']:
+        if 'ROLE_ADMIN' not in claims['authorities']:
             return {'message': 'You dont have permision to perform this operation'}, 401
 
-        data = parser.parse_args()
+        data = user_registration_parser.parse_args()
 
-        if UserModel.find_by_login(data['login']):
-            return {'message': 'User {} already exists'.format(data['login'])}
+        if UserModel.find_by_email(data['email']):
+            return {'message': 'User {} already exists'.format(data['email'])}
 
         new_user = UserModel(
             username=data['username'],
@@ -45,14 +45,19 @@ class UserRegistration(Resource):
         try:
             new_user.save_to_db()
 
-            return {'message': 'User {} was create'.format(new_user.login)}
+            return {'message': 'User {} was create'.format(new_user.email)}
         except:
             return {'message': 'Something went wrong'}, 500
 
 
+user_login_parser = reqparse.RequestParser(bundle_errors=True)
+user_login_parser.add_argument('password', required=True)
+user_login_parser.add_argument('email', required=True)
+
+
 class UserLogin(Resource):
     def post(self):
-        data = parser.parse_args()
+        data = user_login_parser.parse_args()
         current_user = UserModel.find_by_email(data['email'])
         if not current_user:
             return {'message': 'User con email: {} No existe!'.format(data['email'])}, 401

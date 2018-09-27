@@ -61,7 +61,7 @@ def user_identity_lookup(user):
 
 
 from rest_api.ifttt_endpoints import SensorActivado, SensorNormal, StatusEndPoint, TestSetupEndPoint
-from rest_api.user_endpoints import UserLogin, Account
+from rest_api.user_endpoints import UserLogin, Account, UserRegistration
 from rest_api.complejo_endpoints import GuardarComplejo, EditarComplejo, ObtenerComplejos, ObtenerComplejoPorId, \
     BorrarComplejoPorId
 from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, EditarHabitacion, \
@@ -80,6 +80,7 @@ api.add_resource(TestSetupEndPoint, '/api/ifttt/v1/test/setup')
 # user
 api.add_resource(UserLogin, '/api/app/user/authenticate')
 api.add_resource(Account, '/api/app/user/account')
+api.add_resource(UserRegistration, '/api/app/user/registration')
 
 # complejos
 api.add_resource(GuardarComplejo, '/api/app/user/complejos')
