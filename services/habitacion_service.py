@@ -96,7 +96,7 @@ def obtener_servicios_por_habitacion(habitacion_id: str, fecha_inicial: str, fec
         return {'numero_servicios': 0,
                 'ultimo_status': 'Desconocido'}
 
-    (numero_servicios, ultimo_status) = calculadora_servicios.calcular(
+    (numero_servicios, ultimo_status) = calculadora_servicios.calcular2(
         registros=registros, dispositivos_ids=dispositivos_ids)
 
     objeto = {'numero_servicios': numero_servicios,

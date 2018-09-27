@@ -11,12 +11,19 @@ SEGUNDOS_PARA_ASEGURAR_ESTATUS = 180
 class EstadoHabitacion(Enum):
     DISPONIBLE = 1
     EN_SERVICIO = 0
+    INCIERTO = 2
 
 
 class EstadoSensor(Enum):
     ABIERTO = 1
     CERRADO = 0
     INCIERTO = 2
+
+
+TIPOS_EVENTOS_SENSOR = {
+    "ABIERTO": 1,
+    "CERRADO": 0
+}
 
 
 def calcular(registros: [RegistroSensor], dispositivos_ids: [str]) -> (int, EstadoHabitacion):
@@ -102,3 +109,43 @@ def obtener_estado_inicial_de_dispositivo(dispositivo_id: str, registros: [Regis
         return estado, fecha
 
     return None, None
+
+
+def calcular2(registros: [RegistroSensor], dispositivos_ids: [str]) -> (int, EstadoHabitacion):
+    # generar matrix de 1 y 0 dependiendo del estatus por tiempo en base a los registros
+    # en cada nuevo ingreso solo se modifica el
+    estado_anterior_dispositivos = {}
+    tabla = []
+    for registro in registros:
+        fecha = registro.fecha_creacion
+        valores = []
+        for dispositivo_id in dispositivos_ids:
+            if registro.dispositivo_id == dispositivo_id:
+                valores.append(TIPOS_EVENTOS_SENSOR.get(registro.tipo_evento))
+                estado_anterior_dispositivos[dispositivo_id] = TIPOS_EVENTOS_SENSOR.get(registro.tipo_evento)
+                continue
+
+            if dispositivo_id not in estado_anterior_dispositivos.keys():
+                valores.append(None)
+                continue
+            valores.append(estado_anterior_dispositivos[dispositivo_id])
+
+        tabla.append((fecha, valores))
+
+    estado = EstadoHabitacion.INCIERTO
+    servicios = 0
+    for fecha, estadosbinarios in tabla:
+        if None in estadosbinarios:
+            continue
+
+        if sum(estadosbinarios) == 0:
+            nuevo_estado = EstadoHabitacion.EN_SERVICIO
+        if sum(estadosbinarios) == len(dispositivos_ids):
+            nuevo_estado = EstadoHabitacion.DISPONIBLE
+
+        if nuevo_estado == EstadoHabitacion.DISPONIBLE and estado != nuevo_estado:
+            servicios += 1
+
+        estado = nuevo_estado
+
+    return servicios, estado
