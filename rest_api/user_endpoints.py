@@ -72,6 +72,12 @@ class UserLogin(Resource):
             return {'message': 'credenciales incorrectas!'}, 401
 
 
+user_edit_parser = reqparse.RequestParser(bundle_errors=True)
+user_edit_parser.add_argument('username')
+user_edit_parser.add_argument('firstName', required=True)
+user_edit_parser.add_argument('lastName')
+
+
 class Account(Resource):
     @jwt_required
     def get(self):
@@ -91,7 +97,7 @@ class Account(Resource):
 
     @jwt_required
     def put(self):
-        data = parser.parse_args()
+        data = user_edit_parser.parse_args()
         user_to_edit = UserModel.find_by_email(data['email'])
         if not user_to_edit:
             return {'message': 'User {} doesnt exists'.format(data['email'])}
