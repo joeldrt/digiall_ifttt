@@ -76,7 +76,7 @@ def resumen_de_servicios_por_complejo(complejo_id: str, fecha_inicial: str, fech
                                                                                  fecha_final=fecha_final)
 
         total_servicios += resumen_habitacion['numero_servicios'] if resumen_habitacion['numero_servicios'] else 0
-        ganancia_total += resumen_habitacion['ganancia'] if resumen_habitacion['ganancia'] else 0.0
+        ganancia_total = ganancia_total + float(resumen_habitacion['ganancia'] if resumen_habitacion['ganancia'] else 0.0)
         resumenes_habitaciones.append(resumen_habitacion)
 
     resultado_dict['complejo'] = complejo.to_dict()

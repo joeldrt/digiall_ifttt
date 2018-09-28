@@ -116,7 +116,7 @@ def obtener_servicios_por_habitacion(habitacion_id: str, fecha_inicial: str, fec
 
     resultado_dict['ultimo_status'] = ('Disponible' if calculadora_servicios.EstadoHabitacion.DISPONIBLE == ultimo_status else 'Servicio'),
     resultado_dict['numero_servicios'] = numero_servicios
-    resultado_dict['ganancia'] = numero_servicios * (habitacion.precio_base if habitacion.precio_base else 0.0)
+    resultado_dict['ganancia'] = numero_servicios * float(habitacion.precio_base if habitacion.precio_base else 0.0)
     resultado_dict['registros'] = registros
 
     return resultado_dict
