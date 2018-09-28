@@ -63,7 +63,7 @@ def user_identity_lookup(user):
 from rest_api.ifttt_endpoints import SensorActivado, SensorNormal, StatusEndPoint, TestSetupEndPoint
 from rest_api.user_endpoints import UserLogin, Account, UserRegistration
 from rest_api.complejo_endpoints import GuardarComplejo, EditarComplejo, ObtenerComplejos, ObtenerComplejoPorId, \
-    BorrarComplejoPorId
+    BorrarComplejoPorId, ObtenerResumenPorComplejoEntreFechas, ObtenerResumenGeneralEntreFechas
 from rest_api.habitacion_endpoints import GuardarHabitacion, ObtenerHabitaciones, EditarHabitacion, \
     ObtenerHabitacionPorId, BorrarHabitacionPorId, ObtenerHabitacionesPorComplejoId, ObtenerServiciosPorHabitacion, \
     ObtenerRegistrosPorHabitacion
@@ -88,6 +88,8 @@ api.add_resource(ObtenerComplejos, '/api/app/user/complejos')
 api.add_resource(EditarComplejo, '/api/app/user/complejos/<string:complejo_id>')
 api.add_resource(ObtenerComplejoPorId, '/api/app/user/complejos/<string:complejo_id>')
 api.add_resource(BorrarComplejoPorId, '/api/app/user/complejos/<string:complejo_id>')
+api.add_resource(ObtenerResumenPorComplejoEntreFechas, '/api/app/user/complejo_resumen/<string:complejo_id>')
+api.add_resource(ObtenerResumenGeneralEntreFechas, '/api/app/user/resumen_general')
 
 # habitaciones
 api.add_resource(GuardarHabitacion, '/api/app/user/habitaciones')

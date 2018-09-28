@@ -133,6 +133,7 @@ def calcular2(registros: [RegistroSensor], dispositivos_ids: [str]) -> (int, Est
         tabla.append((fecha, valores))
 
     estado = EstadoHabitacion.INCIERTO
+    nuevo_estado = EstadoHabitacion.INCIERTO
     servicios = 0
     for fecha, estadosbinarios in tabla:
         if None in estadosbinarios:

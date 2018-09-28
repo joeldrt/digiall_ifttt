@@ -111,8 +111,7 @@ class ObtenerHabitacionPorId(Resource):
             return {'message': 'La habitación que se desea obtener no le pertenece al propietario'}, 403
 
         try:
-            habitacion = habitacion_service.obtener_habitacion_por_id(usuario_propietario=usuario_propietario,
-                                                                      habitacion_id=habitacion_id)
+            habitacion = habitacion_service.obtener_habitacion_por_id(habitacion_id=habitacion_id)
         except Exception as exception:
             return {'message': 'Error al obtener habitaciones por id'}, 500
 
@@ -173,13 +172,13 @@ class ObtenerServiciosPorHabitacion(Resource):
             return {'message': 'La habitación no le pertenece al propietario'}, 403
 
         try:
-            num_servicios = habitacion_service.obtener_servicios_por_habitacion(habitacion_id=habitacion_id,
-                                                                                fecha_inicial=fecha_inicial,
-                                                                                fecha_final=fecha_final)
+            servicios_habitacion = habitacion_service.obtener_servicios_por_habitacion(habitacion_id=habitacion_id,
+                                                                                       fecha_inicial=fecha_inicial,
+                                                                                       fecha_final=fecha_final)
         except Exception as exception:
             return {'message': 'Error al recuperar el numero de servicios por habitación'}, 500
 
-        return num_servicios
+        return servicios_habitacion
 
 
 obtener_servicios_por_habitacion_parser = reqparse.RequestParser(bundle_errors=True)

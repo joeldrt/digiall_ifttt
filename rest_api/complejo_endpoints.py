@@ -1,4 +1,4 @@
-from flask_restful import Resource, reqparse, request
+from flask_restful import Resource, reqparse
 from flask_jwt_extended import (jwt_required,
                                 get_jwt_identity)
 
@@ -94,8 +94,7 @@ class ObtenerComplejoPorId(Resource):
     @jwt_required
     def get(self, complejo_id):
         usuario_propietario = get_jwt_identity()
-        complejo = complejo_service.obtener_complejo_por_id(usuario_propietario=usuario_propietario,
-                                                            complejo_id=complejo_id)
+        complejo = complejo_service.obtener_complejo_por_id(complejo_id=complejo_id)
         return complejo.to_dict()
 
 
@@ -108,6 +107,56 @@ class BorrarComplejoPorId(Resource):
                                                        complejo_id=complejo_id):
                 return {'message': 'Complejo Borrado'}, 200
             else:
-                return {'message': 'Error al borrar el complejo'}, 500
+                return {'message': 'El complejo no le pertenece al propietario'}, 500
         except Exception as exception:
-            return {'message': exception}, 500
+            return {'message': 'Error del servidor al borrar el complejo'}, 500
+
+
+obtener_resumen_complejo_parser = reqparse.RequestParser(bundle_errors=True)
+obtener_resumen_complejo_parser.add_argument('fecha_inicial', required=True, location='args')
+obtener_resumen_complejo_parser.add_argument('fecha_final', required=True, location='args')
+
+
+class ObtenerResumenPorComplejoEntreFechas(Resource):
+    @jwt_required
+    def get(self, complejo_id):
+        usuario_propietario = get_jwt_identity()
+        try:
+            if not complejo_service.complejo_le_pertenece_a_propietario(usuario_propietario=usuario_propietario,
+                                                                        complejo_id=complejo_id):
+                return {'message': 'El complejo no le pertenece al propietario'}, 403
+        except Exception as exception:
+            return {'message': 'Error del servidor al verificar la propiedad del complejo'}, 500
+
+        data = obtener_resumen_complejo_parser.parse_args()
+
+        fecha_inicial = data['fecha_inicial']
+        fecha_final = data['fecha_final']
+
+        resumen_complejo = complejo_service.resumen_de_servicios_por_complejo(complejo_id=complejo_id,
+                                                                              fecha_inicial=fecha_inicial,
+                                                                              fecha_final=fecha_final)
+
+        return resumen_complejo
+
+
+obtener_resumen_general_parser = reqparse.RequestParser(bundle_errors=True)
+obtener_resumen_general_parser.add_argument('fecha_inicial', required=True, location='args')
+obtener_resumen_general_parser.add_argument('fecha_final', required=True, location='args')
+
+
+class ObtenerResumenGeneralEntreFechas(Resource):
+    @jwt_required
+    def get(self):
+        usuario_propietario = get_jwt_identity()
+
+        data = obtener_resumen_general_parser.parse_args()
+
+        fecha_inicial = data['fecha_inicial']
+        fecha_final = data['fecha_final']
+
+        resumen_general = complejo_service.resumen_servicios_general(usuario_propietario=usuario_propietario,
+                                                                     fecha_inicial=fecha_inicial,
+                                                                     fecha_final=fecha_final)
+
+        return resumen_general
