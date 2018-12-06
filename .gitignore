@@ -6,3 +6,5 @@ __pycache__/
 da_ifttt_api.log
 
 app.db
+
+venv/
